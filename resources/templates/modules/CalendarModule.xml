@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<module name="CalendarModule">
+	<data type="DynamicFile">Calendar.Module.php</data>
+</module>

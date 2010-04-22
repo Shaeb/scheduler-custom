@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<page name="CalendarPage">
+	<dependency type="style" media="screen">medtele_screen.css</dependency>
+	<dependency type="style" media="screen">animation_screen.css</dependency>
+	<dependency type="script">jquery.application.js</dependency>
+	<template>MedTeleNursing.Template.xml</template>
+	<title>Welcome to MedTeleNursing.com - View Your Calendar</title>
+	<security gate="LoginPage">
+		<session>true</session>
+		<userAccess>
+			<group>Administrators</group>
+			<group>Nurses</group>
+			<user>nathanfl</user>
+		</userAccess>
+		<logging>false</logging>
+	</security>
+	<modules replace="mainModule">
+		<module>FlashModule</module>
+		<module>IndexModule</module>
+	</modules>
+	<modules replace="loginRegistrationPanel">
+		<module>LoginRegistrationModule</module>
+		<module>UserProfileModule</module>
+	</modules>
+</page>
