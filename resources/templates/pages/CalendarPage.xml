@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <page name="CalendarPage">
-	<dependency type="style" media="screen">medtele_screen.css</dependency>
+	<dependency type="style" media="screen">colorbox.css</dependency>
 	<dependency type="style" media="screen">animation_screen.css</dependency>
-	<dependency type="script">jquery.application.js</dependency>
-	<template>MedTeleNursing.Template.xml</template>
+	<dependency type="script">modules/jquery.schedule.js</dependency>
+	<template>Scheduler.Template.xml</template>
 	<title>Welcome to MedTeleNursing.com - View Your Calendar</title>
 	<security gate="LoginPage">
 		<session>true</session>
@@ -15,8 +15,9 @@
 		<logging>false</logging>
 	</security>
 	<modules replace="mainModule">
-		<module>FlashModule</module>
-		<module>IndexModule</module>
+		<module>CalendarModule</module>
+		<module>Calendar.Controls.Module</module>
+		<module>ProposeShiftTradeModule</module>
 	</modules>
 	<modules replace="loginRegistrationPanel">
 		<module>LoginRegistrationModule</module>

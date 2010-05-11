@@ -18,7 +18,6 @@ class Page extends Document {
 		$this->application = ApplicationController::getInstance();
 		if(isset($_REQUEST["scaffolding"]) && "true" == $_REQUEST["scaffolding"]){	
 			add_required_class( 'Scaffold.Controller.php', SCAFFOLD );
-			$this->application->loadScaffoldingSettings("");
 			$settings = $this->application->getSettings();
 			$actions = array(ACTION_LIST,ACTION_DELETE,ACTION_UPDATE,ACTION_FIND,ACTION_ADD);
 			$action = "";
@@ -43,7 +42,7 @@ class Page extends Document {
 			$table = preg_replace("/Page$/", "", $table);
 			$_REQUEST["action"] = $action;
 			$_REQUEST["table"] = $table;
-			$pageName = $settings["global"]["scaffolding"]["default_page"];
+			$pageName = $settings["global"]["scaffolding"]["page"];
 			$_REQUEST["page"] = $pageName;
 			$this->scaffolding = ScaffoldController::getInstance($this->application);
 		}
@@ -94,7 +93,9 @@ class Page extends Document {
 			//will only apply 1 template, so take the first one
 			$node = $nodes->item( 0 );
 			$this->log( "<!-- processing template $node->nodeValue -->" );
-			$this->template = new Template( $node->nodeValue );
+			$settings = $this->application->getSettings();
+			$template = ($this->urlExists($node->nodeValue)) ? $node->nodeValue : $settings["global"]["template"];
+			$this->template = new Template( $template );
 		}
 	}
 
@@ -211,7 +212,7 @@ class Page extends Document {
 							$element = $this->template->createElement("script");
 							$element->setAttribute("src", JAVASCRIPT_PATH . $node->nodeValue);
 							$element->setAttribute("type","text/javascript");
-							$this->template->appendUniqueChildToParent($head,$element,$compareElements);
+							$this->template->appendUniqueChildToParent($head,$element,array("Page", "compareElements"));
 							break;
 						case DEPENDENCY_TYPE_CLASS_VALUE:
 							if($node->hasAttribute("subtype")){
@@ -275,7 +276,7 @@ class Page extends Document {
 		foreach( $keys as $key ) {
 			$tempOutput = '';
 			foreach( $this->moduleList[ $key ] as $module ) {
-				$tempOutput .= $module->getOutput(XML_FORMAT,$_REQUEST);
+				$tempOutput .= $module->getOutput(HTML_FORMAT,$_REQUEST);
 			}
 			$bind[ $key ] = $tempOutput;
 			//$this->log( "<!-- $key: \n\n $tempOutput -->\n\n" );

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <page name="IndexPage">
-	<dependency type="style" media="screen">medtele_screen.css</dependency>
-	<dependency type="style" media="screen">animation_screen.css</dependency>
+	<dependency type="style" media="screen">animation.screen.css</dependency>
 	<dependency type="script">jquery.application.js</dependency>
 	<template>MedTeleNursing.Template.xml</template>
 	<title>Welcome to MedTeleNursing.com</title>
@@ -17,11 +16,9 @@
 	<modules replace="mainModule">
 		<module>FlashModule</module>
 		<module>IndexModule</module>
+		<module>DisplayInformationModule</module>
 	</modules>
-	<modules replace="leftModule">
-		<module>LoginModule</module>
-	</modules>
-	<modules replace="loginRegistrationPanel">
+		<modules replace="loginRegistrationPanel">
 		<module authenticated="false">LoginRegistrationModule</module>
 		<module authenticated="true">UserProfileModule</module>
 	</modules>

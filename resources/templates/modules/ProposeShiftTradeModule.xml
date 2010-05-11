@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<module name="ProposeShiftTradeModule">
+	<data type="DynamicFile">ProposeShiftTrade.Module.php</data>
+</module>

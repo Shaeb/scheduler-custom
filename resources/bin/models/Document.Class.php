@@ -78,8 +78,11 @@ abstract class Document extends DOMDocument {
 		return success;
 	}
 	
+	public function saveJSON(){}
+	
 	public function getOutput($format = XML_FORMAT){
-		return (XML_FORMAT == $format) ? $this->saveXML() : (HTML_FORMAT == $format) ? $this->saveHTML() : $this->saveHTML();
+		return (XML_FORMAT == $format) ? $this->saveXML() : (HTML_FORMAT == $format) ? $this->saveHTML() : 
+			(JSON_FORMAT == $formation ) ? $this->saveJSON() : $this->saveHTML();
 	}
 }
 

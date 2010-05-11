@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<module name="ViewProposedTradesModule">
+	<data type="DynamicFile">ViewProposedTrades.Module.php</data>
+</module>

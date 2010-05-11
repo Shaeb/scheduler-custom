@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<module name="UsersAutoSuggestModule">
+	<data type="DynamicFile">AutoSuggest.Module.php</data>
+</module>

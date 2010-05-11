@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+#DisplayInformationModule {
+	border-top: 1px dashed #EFEFEF;
+}
+#ProposeShiftTradeModule {
+		display:none;
+}
+
+#SendAMessageModule{
+	display: none;
+}

@@ -51,7 +51,8 @@ class UserController {
 		$logged_in = $this->user->login( $connection );
 		if ( 1 == $logged_in ) {
 			$this->session = SessionController::getInstance();
-			$this->session->setMessage( "Beinvenido {$this->user->username}");
+			$application = ApplicationController::getInstance();
+			$application->addMessage("Welcome back {$this->user->username}");	
 			$this->session->setupAuthorizedSession( $this->user );
 		} else {
 			
@@ -67,7 +68,8 @@ class UserController {
 		}
 		if ( $this->user->login( $connection ) ) {
 			$this->session = SessionController::getInstance();
-			$this->session->setMessage( "Welcome back {$this->user->username}");
+			$application = ApplicationController::getInstance();
+			$application->addMessage("Welcome back {$this->user->username}");	
 			$this->session->setupAuthorizedSession( $this->user );
 		} else {
 			echo "not logged in";

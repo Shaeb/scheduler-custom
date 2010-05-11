@@ -22,7 +22,7 @@ class ApplicationController {
 		$this->connection = DatabaseConnection::getInstance();
 		$this->session = SessionController::getInstance();
 		$this->session->start();
-		$this->appSettings = new ApplicationSettings(APPLICATION_SETTINGS_FILE, ENVIRONMENT);
+		$this->appSettings = new ApplicationSettingsMap(APPLICATION_SETTINGS_FILE, ENVIRONMENT);
 		$username = '';
 		$this->messages = array( ERROR_MESSAGES => array(), WARNING_MESSAGES => array(), INFORMATIONAL_MESSAGES => array() );
 		if( isset($_SESSION['username'])){
@@ -46,7 +46,9 @@ class ApplicationController {
 	}
 	
 	public function getDatabaseConnection(){
-		$settings = $this->appSettings->getSettingsFor("database");
+		//$settings = $this->appSettings->getSettingsFor("database");
+		$settings = $this->appSettings->getSettings();
+		$settings = $settings[ENVIRONMENT]["database"];
 		if(isset($settings)){
 			if(array_key_exists("username",$settings)){
 				$this->connection->setUsername($settings["username"]);
@@ -66,7 +68,9 @@ class ApplicationController {
 	
 	public function isPageGated($pageName){
 		$isGated = false;
-		$settings = $this->appSettings->getSettingsFor("security");
+		//$settings = $this->appSettings->getSettingsFor("security");
+		$settings = $this->appSettings->getSettings();
+		$settings = $settings[ENVIRONMENT]["security"];
 		if(isset($settings)){
 			if(array_key_exists("gatedPages",$settings)){
 				$isGate = in_array($pageName,$settings["gatedPages"]);
@@ -95,8 +99,8 @@ class ApplicationController {
 	public function getSettingsFor($target, $block = ENVIRONMENT){
 		return $this->appSettings->getSettingsFor($target, $block);
 	}
-	public function loadScaffoldingSettings($block){
-		$this->appSettings->loadScaffoldingSettings($block);
+	public function loadGlobalSettings(){
+		$this->appSettings->loadGlobalSettings();
 		return $this->appSettings->getSettings();
 	}
 	public function getSettings(){
@@ -189,6 +193,50 @@ class SessionController {
 	}
 }
 
+class ApplicationSettingsMap extends Document {
+	private $environment;
+	private $url;
+	private $appSettingsFileName;
+	private $tags;
+	private $settings;
+	private $environmentRootNode;
+	public  $isLoaded;
+	//private static $instance; 
+
+	public function __construct($appSettingsFileName, $environment) {
+		if( isset( $appSettingsFileName ) && isset($environment) ) {
+			$this->appSettingsFileName = $appSettingsFileName;
+			$this->url = APPSETTINGS_PATH . $this->appSettingsFileName . PAGE_EXTENSION;
+			if( $this->urlExists( $this->url ) ) {
+				$this->preserveWithWhiteSpace = false;
+				$this->isLoaded = $this->load( $this->url, LIBXML_NOBLANKS );
+				$this->settings = array();
+				$this->settings = $this->reload($this->documentElement->childNodes, $this->settings);
+//				print_r($this->settings);
+			} else {
+				$this->log( "url not found: $this->url." );
+				$this->reload(APPLICATION_DEFAULT_SETTINGS_FILE, $environment);
+			}
+		}
+	}
+		
+	public function reload(DOMNodeList $nodes, $settings){	
+		foreach($nodes as $node){
+			if(!$node->hasChildNodes() || "#text" == $node->firstChild->nodeName || "#comment" == $node->firstChild->nodeName){
+				$settings[$node->nodeName] = $node->nodeValue;
+			} else {
+				$settings[$node->nodeName] = $this->reload($node->childNodes, $settings[$node->nodeName]); 
+			}
+		}
+		return $settings;
+	}
+	
+	public function getSettings(){
+		return $this->settings;
+	}
+}
+
+/********
 class ApplicationSettings extends Document {
 	private $environment;
 	private $url;
@@ -219,8 +267,10 @@ class ApplicationSettings extends Document {
 				}
 			} else {
 				$this->log( "url not found: $this->url." );
+				$this->reload(APPLICATION_DEFAULT_SETTINGS_FILE, $environment);
 			}
 		}
+		$this->loadGlobalSettings();
 		//print_r($this->settings);
 		//exit();
 	}
@@ -258,32 +308,41 @@ class ApplicationSettings extends Document {
 	}
 	
 	// block in this case refers to the templates table attribute
-	public function loadScaffoldingSettings($block){
+	public function loadGlobalSettings(){
 		// <global> ....
 		$globalBlock = $this->getElementsByTagName(GLOBAL_ENVIRONMENT);
 		$global = $globalBlock->item(0);
 		foreach($global->childNodes as $blocks){
-			// <scaffolding> ...		
-			if($blocks->nodeName == SCAFFOLDING_TAG){
-				// <templates> ...
-				foreach($blocks->childNodes as $templates){
-					if($templates->hasAttribute(SCAFFOLDING_TEMPLATES_TABLE_ATTRIBUTE)){
-						$table = $templates->getAttribute(SCAFFOLDING_TEMPLATES_TABLE_ATTRIBUTE);
-						foreach($templates->childNodes as $action){
-									$this->settings[GLOBAL_ENVIRONMENT][SCAFFOLDING_TAG][$table][$action->nodeName] = $action->nodeValue;
-						}
-					} else {
-						if(PAGE_TAG == $templates->nodeName) {
-							if($templates->hasAttribute("default") && "true" == $templates->getAttribute("default")){
-								$this->settings[GLOBAL_ENVIRONMENT][SCAFFOLDING_TAG]["default_page"] = $templates->nodeValue;
+			// <scaffolding> ...	
+			switch($blocks->nodeName){
+				case GLOBAL_TEMPLATE_TAG:
+					$this->settings[GLOBAL_ENVIRONMENT]["default_template"] = $blocks->nodeValue;
+					break;
+				case SCAFFOLDING_TAG:
+					// <templates> ...
+					foreach($blocks->childNodes as $templates){
+						if($templates->hasAttribute(SCAFFOLDING_TEMPLATES_TABLE_ATTRIBUTE)){
+							$table = $templates->getAttribute(SCAFFOLDING_TEMPLATES_TABLE_ATTRIBUTE);
+							foreach($templates->childNodes as $action){
+										$this->settings[GLOBAL_ENVIRONMENT][SCAFFOLDING_TAG][$table][$action->nodeName] = $action->nodeValue;
+							}
+						} else {
+							if(PAGE_TAG == $templates->nodeName) {
+								if($templates->hasAttribute("default") && "true" == $templates->getAttribute("default")){
+									$this->settings[GLOBAL_ENVIRONMENT][SCAFFOLDING_TAG]["default_page"] = $templates->nodeValue;
+								}
 							}
 						}
 					}
-				}
-			}
+					break;
+				case "autosuggest":
+					break;
+			}	
 		}
 	}
 }
+
+****/
 
 class DatabaseConnection{
 	private $username = "";

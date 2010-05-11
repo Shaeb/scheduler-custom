@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<module name="DayOffRequestModule">
+	<data type="DynamicFile">DayOffRequest.Module.php</data>
+</module>

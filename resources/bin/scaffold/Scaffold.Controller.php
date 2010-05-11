@@ -43,7 +43,7 @@ class ScaffoldController{
 				$this->scaffoldObject->find($id);
 			}
 		}
-		$settings = $this->application->loadScaffoldingSettings($table);
+		$settings = $this->application->loadGlobalSettings();
 		$template = $settings[GLOBAL_ENVIRONMENT][$table][$action];
 		if(!isset($template)){
 			// check to see if there are global defaults listed, if so use them ...

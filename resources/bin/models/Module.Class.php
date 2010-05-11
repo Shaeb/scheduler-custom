@@ -103,15 +103,24 @@ class Module extends Document {
 			}
 		}
 	}
+	
+	public function saveJSON(){
+		return $this->dynamicFileOutput;
+	}
 
 	public function getOutput($format = XML_FORMAT) {
-		$output = "<div id='{$this->definedName}' name='{$this->definedName}'>\n";
-		$output .= $this->dynamicFileOutput . "\n";
-		$output .= $this->staticFileOutput . "\n";
-		$output .= "</div>\n";
-		$this->xmlOutput->loadHTML( $output );
-		//$this->log( "<!-- " . $this->stripHTMLOutput( $this->xmlOutput->saveHTML() ) . " --> ");
-		return $this->stripHTMLOutput( $this->xmlOutput->saveHTML() );
+		if(JSON_FORMAT == $format){
+			return $this->saveJSON();
+		} else {
+			$output = "<div id='{$this->definedName}' name='{$this->definedName}'>\n";
+			$output .= $this->dynamicFileOutput . "\n";
+			$output .= $this->staticFileOutput . "\n";
+			$output .= "</div>\n";
+			$this->xmlOutput->loadHTML( $output );
+			//$this->log( "<!-- " . $this->stripHTMLOutput( $this->xmlOutput->saveHTML() ) . " --> ");
+			return $this->stripHTMLOutput( 
+				(XML_FORMAT == $format ) ? $this->xmlOutput->saveXML() : $this->xmlOutput->saveHTML() );
+		}
 	}
 }
 ?>

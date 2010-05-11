@@ -1,5 +1,5 @@
 <?
-define(APP_PREFIX, "/medtele/");
+define(APP_PREFIX, "/scheduler/");
 define(	"APP_ADDRESS", 'http://' . $_SERVER['HTTP_HOST'] . APP_PREFIX);
 define( "RESOURCES_PATH", APP_ADDRESS . 'resources/' );
 define( "CONTROLLER_PATH", RESOURCES_PATH . 'bin/controllers/' );
@@ -51,6 +51,7 @@ define( TEMPLATE_PATH, 'http://' . $_SERVER['HTTP_HOST'] .  APP_PREFIX . 	"resou
 define( TEMPLATE_TAG, "template" );
 define( REPLACE_TAG, "replace" );
 define( REPLACE_TAG_REPLACE_ATTRIBUTE, "id" );
+define(GLOBAL_TEMPLATE_TAG,"template");
 define( SCAFFOLDING_TEMPLATE_PATH, RESOURCES_PATH .  "templates/scaffolding/" );
 define(SCAFFOLDING_TAG,"scaffolding");
 define(SCAFFOLDING_TEMPLATES_TAG,"templates");
@@ -66,7 +67,17 @@ define( IMAGE_ROOT, 'http://' . $_SERVER[ 'HTTP_HOST' ] . APP_PREFIX . 'resource
 define( DEBUGGING, 1 );
 define( ENVIRONMENT, "development");
 define( GLOBAL_ENVIRONMENT, "global" );
-define(APPLICATION_SETTINGS_FILE, "MedTeleNursing.AppSettings");
+
+$applicationSettings = "Scheduler.AppSettings";
+define(APPLICATION_DEFAULT_SETTINGS_FILE, $applicationSettings);
+// got to determine which app settings file to use:
+if (preg_match('/^([^.]+)\.localhost\.com$/', $_SERVER['HTTP_HOST'], $match)) {
+	if(1 < count($match)){
+		$appFile = $match[1];
+		$applicationSettings = "{$appFile}.AppSettings";
+	}
+}
+define(APPLICATION_SETTINGS_FILE, $applicationSettings);
 
 require_once( BIN_ROOT . 'helpers/tools.php');
 add_required_class( 'Document.Class.php', MODEL );

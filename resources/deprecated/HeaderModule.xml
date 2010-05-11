@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<module name="HeaderModule">
-	<dependency type="Class">Header</dependency>
-	<data type="DynamicFile">HeaderModule.php</data>
-</module>

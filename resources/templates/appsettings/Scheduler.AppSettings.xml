@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applicationSettings>
+	<development>
+		<database>
+			<username>medtele</username>
+			<password>fliex123</password>
+			<hostname>localhost</hostname>
+			<databasename>medtele</databasename>
+		</database>
+		<security>
+			<registration>
+				<defaultPage>RegistrationPage</defaultPage>
+			</registration>
+			<gatedPages>
+				<page>CalendarPage</page>
+				<page>ROFLPage</page>
+			</gatedPages>
+		</security>
+	</development>
+	<testing>
+		<database>
+			<username>medtele</username>
+			<password>fliex123</password>
+			<hostname>localhost</hostname>
+			<databasename>medtele</databasename>
+		</database>
+	</testing>
+	<production>
+		<database>
+			<username>medtelen_web</username>
+			<password>medtelenursing</password>
+			<hostname>localhost</hostname>
+			<databasename>medtelen_medtele</databasename>
+		</database>
+	</production>
+	<global>
+		<template>Scheduler.Template.xml</template>
+		<scaffolding>
+			<page default="true">ScaffoldingPage</page>
+			<templates table="Default">
+			<!-- 
+				<list>Default.List.Part.xml</list>
+			-->
+			</templates>
+			<templates table="All">
+				<list>All.List.Part.xml</list>
+			</templates>
+			<templates table="Users">
+			<!-- 
+				<list>Users.List.Part.xml</list>
+			-->
+			</templates>
+			<templates table="UserLevels">
+			<!-- 
+				<find>Users.Find.Part.xml</find>
+				<add>Users.Add.Part.xml</add>
+				<delete>Users.Delete.Part.xml</delete>
+				<update>Users.Update.Part.xml</update>
+				<list>Users.List.Part.xml</list>
+				-->
+			</templates>
+		</scaffolding>
+	</global>
+</applicationSettings>

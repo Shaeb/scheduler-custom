@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Scheduler.com - Innovative web-based scheduling for hospitals.</title>
+		<link type="text/css" rel="stylesheet" href="../resources/css/colorbox.css" media="screen" />
+			<link type="text/css" rel="stylesheet" href="../resources/css/modules.screen.css" media="screen" />
+  		<link rel="stylesheet" href="../resources/css/slide.css" type="text/css" media="screen" />
+  		<link rel="stylesheet" href="../resources/css/screen.css" type="text/css" media="screen" />
+		
+		<!-- PNG FIX for IE6 -->
+	  	<!-- http://24ways.org/2007/supersleight-transparent-png-in-ie6 -->
+		<!--[if lte IE 6]>
+			<script type="text/javascript" src="../resources/javascript/pngfix/supersleight-min.js"></script>
+		<![endif]-->
+		 
+	    <!-- jQuery - the core -->
+		<script src="../resources/javascript/jquery-1.4.2.js" type="text/javascript"></script>
+		<script src="../resources/javascript/jquery.colorbox-min.js" type="text/javascript"></script>
+		<script src="../resources/javascript/jquery.tools.min.js" type="text/javascript"></script>
+		<script src="../resources/javascript/jquery.application.js" type="text/javascript"></script>
+		<!-- Sliding effect -->
+		<script src="../resources/javascript/slide.js" type="text/javascript"></script>
+</head>
+
+<body>
+<!-- Panel -->
+<replace id="loginRegistrationPanel"></replace> 
+<!--panel -->
+<!-- <h1 id="header" class="paddedContent">MedTeleNursing.com</h1> -->
+<div id="navigation" class="rounded_corners green_with_borders">
+	<ul>
+		<li><a href="../page/IndexPage">Home</a></li>
+		<li><a href="../page/CalendarPage">Calendar</a></li>
+		<li><a href="../page/SchedulePage">Schedule</a></li>
+		<li><a href="../page/MessagesPage">Messages</a></li>
+		<li><a href="../page/IndexPage">Reports</a></li>
+		<li><a href="../page/IndexPage">Search</a></li>
+	</ul>
+</div>
+<replace id="leftModule">
+</replace>
+<div class="centered_content rounded_corners white_with_borders" id="mainContent">
+	<div class="paddedContent">
+		<message id="dynamic_messaging_module"></message>
+		<replace id="mainModule">
+		</replace>
+	</div>
+</div>
+</body>
+</html>

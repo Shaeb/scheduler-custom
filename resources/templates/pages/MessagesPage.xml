@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<page name="CalendarPage">
+	<dependency type="style" media="screen">colorbox.css</dependency>
+	<dependency type="style" media="screen">autosuggest.css</dependency>
+	<dependency type="script">modules/jquery.send_a_message.js</dependency>
+	<dependency type="script">jquery.autoSuggest.js</dependency>
+	<template>Scheduler.Template.xml</template>
+	<title>Welcome to MedTeleNursing.com - View Your Calendar</title>
+	<security gate="LoginPage">
+		<session>true</session>
+		<userAccess>
+			<group>Administrators</group>
+			<group>Nurses</group>
+			<user>nathanfl</user>
+		</userAccess>
+		<logging>false</logging>
+	</security>
+	<modules replace="mainModule">
+		<module>MessagesModule</module>
+		<module>SendAMessageModule</module>
+	</modules>
+	<modules replace="loginRegistrationPanel">
+		<module>LoginRegistrationModule</module>
+		<module>UserProfileModule</module>
+	</modules>
+</page>

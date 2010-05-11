@@ -29,5 +29,3 @@ jQuery.createVisualQueue = function(){
 	delete div;
 	delete body;
 };
-
-$(document).ready(jQuery.createVisualQueue);
