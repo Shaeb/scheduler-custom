@@ -7,6 +7,7 @@
 			<link type="text/css" rel="stylesheet" href="../resources/css/modules.screen.css" media="screen" />
   		<link rel="stylesheet" href="../resources/css/slide.css" type="text/css" media="screen" />
   		<link rel="stylesheet" href="../resources/css/screen.css" type="text/css" media="screen" />
+  		<link rel="stylesheet" href="../resources/css/ui-lightness/jquery-ui-1.8.1.custom.css" type="text/css" media="screen" />
 		
 		<!-- PNG FIX for IE6 -->
 	  	<!-- http://24ways.org/2007/supersleight-transparent-png-in-ie6 -->
@@ -16,9 +17,9 @@
 		 
 	    <!-- jQuery - the core -->
 		<script src="../resources/javascript/jquery-1.4.2.js" type="text/javascript"></script>
-		<script src="../resources/javascript/jquery.colorbox-min.js" type="text/javascript"></script>
-		<script src="../resources/javascript/jquery.tools.min.js" type="text/javascript"></script>
+		<script src="../resources/javascript/jquery.colorbox.js" type="text/javascript"></script>
 		<script src="../resources/javascript/jquery.application.js" type="text/javascript"></script>
+		<script src="../resources/javascript/jquery.tools.min.js" type="text/javascript"></script>
 		<!-- Sliding effect -->
 		<script src="../resources/javascript/slide.js" type="text/javascript"></script>
 </head>

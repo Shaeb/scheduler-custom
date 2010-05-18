@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<module name="RequestTimeOffModule">
+	<dependencies>
+		<script>modules/jquery.calendar.request-time-off.js</script>
+	</dependencies>
+	<data type="DynamicFile">RequestTimeOff.Module.php</data>
+	<view>RequestTimeOff.Module.php</view>
+	<process>RequestTimeOff.Processor.php</process>
+</module>

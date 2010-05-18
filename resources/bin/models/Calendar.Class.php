@@ -5,10 +5,13 @@ define(CALENDAR_STYLE_CONTAINER,"calendar_container");
 define(CALENDAR_STYLE_HEADER,"calendar_header");
 define(CALENDAR_STYLE_TABLE, "calendar_table");
 define(CALENDAR_STYLE_DATE_NOT_IN_MONTH, "calendar_date_not_in_month");
+define(CALENDAR_STYLE_DATE_IN_MONTH, "calendar_date_in_month");
 define(CALENDAR_STYLE_DATE, "calendar_date");
+define(CALENDAR_STYLE_DATE_ITEM, "calendar_date_item");
 define(CALENDAR_STYLE_LAST_COLUMN, "calendar_last_column");
 define(CALENDAR_STYLE_ROW,"calendar_row");
 define(CALENDAR_STYLE_BOTTOM_ROW, "calendar_bottom_row");
+define(CALENDAR_STYLE_TODAY, "calendar_today");
 
 class Calendar extends Document {
 	private $firstDayOfWeek = '';
@@ -18,6 +21,7 @@ class Calendar extends Document {
 	private $month;
 	private $mon;
 	private $year;
+	private $mday;
 	private $daysInMonth;
 	private $dayOfMonthToDisplay; // i.e., which day are we outputing
 	private $firstDay;
@@ -36,6 +40,8 @@ class Calendar extends Document {
 	private $daysInPreviousMonth;
 	private $displayDaysForNextMonth;
 	private $today;
+	private $tagOpen;
+	private $payPeriodTag;
 	
 	public function __construct($createForDate = null, $format = "Y-m-d") {
 		$this->firstDayOfWeek = $this->setFirstDayOfWeek();
@@ -60,7 +66,8 @@ class Calendar extends Document {
 		$this->month = $this->date_info["month"];
 		$this->mon = $this->date_info["mon"];
 		$this->year = $this->date_info["year"];
-		//$this->daysInMonth = date('t', $this->today->getTimestamp());
+		$this->mday = $this->date_info["mday"]
+;		//$this->daysInMonth = date('t', $this->today->getTimestamp());
 		$this->daysInMonth = date('t', $this->today->format("U"));
 		$this->dayOfMonthToDisplay = 1;
 		//$this->firstDay = DateTime::createFromFormat($this->format,"{$this->year}-{$this->mon}-01");
@@ -92,6 +99,8 @@ class Calendar extends Document {
 		//$this->daysInPreviousMonth = date("t",$this->previousMonth->getTimestamp());
 		$this->daysInPreviousMonth = 31;
 		$this->displayDaysForNextMonth = 1;
+		
+		$this->tagOpen = false;
 	}
 	
 	public function buildCalendar(){
@@ -125,11 +134,15 @@ class Calendar extends Document {
 		$tr = null;
 		$td = null;
 		$dateDiv = null;
+		$payPeriod = null;
 		
 		for( $i = 1; $i <= $this->numberOfWeeks; ($i++)) {
 			$classToAdd = ( $i != $this->numberOfWeeks ) ? CALENDAR_STYLE_ROW : CALENDAR_STYLE_ROW . ' ' . CALENDAR_STYLE_BOTTOM_ROW;
+			if(1 == ($i % 2)){
+				$payPeriod = "payperiod_{$i}";
+			}
 			$tr = $this->createElement("tr");
-			$tr->setAttribute("class", $classToAdd);
+			$tr->setAttribute("class", "{$classToAdd} {$payPeriod}");
 			
 			for( $j = 0; $j < 7; ($j++) ){
 				$classToAdd = (6 == $j) ? CALENDAR_STYLE_LAST_COLUMN : null;
@@ -143,6 +156,10 @@ class Calendar extends Document {
 					// guess not, display regular values
 					if( $this->dayOfMonthToDisplay <= $this->daysInMonth ) {
 						$displayDate = $this->dayOfMonthToDisplay;
+						if($this->mday == $displayDate){
+							$classToAdd = (isset($classToAdd)) ? $classToAdd . ' ' . CALENDAR_STYLE_TODAY : CALENDAR_STYLE_TODAY;
+						}
+						$classToAdd = (isset($classToAdd)) ? $classToAdd . ' ' . CALENDAR_STYLE_DATE_IN_MONTH : CALENDAR_STYLE_DATE_IN_MONTH;
 						$this->dayOfMonthToDisplay++;
 					} else {
 						// we are at the end of the month now ...
@@ -154,7 +171,9 @@ class Calendar extends Document {
 				$dateDiv = $this->createElement("div", $displayDate);
 				$dateDiv->setAttribute("class", CALENDAR_STYLE_DATE);
 				$td = $this->createElement("td");
+				$classToAdd = (isset($classToAdd)) ? $classToAdd . ' ' . CALENDAR_STYLE_DATE_ITEM : CALENDAR_STYLE_DATE_ITEM;
 				$td->setAttribute("class", $classToAdd);
+				$td->setAttribute("id", "date_{$i}_{$j}");
 				
 				$td->appendChild($dateDiv);
 				$tr->appendChild($td);

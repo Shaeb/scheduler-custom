@@ -1,12 +1,37 @@
 <?php
-function getNewMessages(){
-	$output = "<dl>";
-	// in reality, this would have a message id associated with it
-	$title = '<dt class="message_title">Message from User X @04/01/2010 01:00</dt>';
-	for($i = 0; $i < 5; ($i++)){
-			$output .= "{$title}<dd>Hey dude, your fly is open.</dd>";
+add_required_class("Message.Class.php", MODEL);
+add_required_class("Scaffold.Class.php", SCAFFOLD);
+
+$application = ApplicationController::getInstance();
+$user = $application->getUser();
+$database = $application->getDatabaseConnection();
+$factory = ScaffoldFactory::getInstance($database);
+
+function getAllMessages($factory,$user){
+	$options = array();
+	$options["conditions"] = array("recipient" => $user->id);
+	$messageRecipients = $factory->buildScaffoldObject("MessageRecipients");
+	$received = $messageRecipients->find("all",$options);
+	$output = '<div id="messages_' . $user->id . '">';
+	foreach($received as $item){
+		$message = $item->getRelatedObjectForKey("messageId");
+		$title = '<h4 class="message_title">' . "'{$message->title}'</h4>";
+		$output .= "<p> from {$user->username} @{$message->sent}</p><p>{$message->message}</p>";
 	}
-	$output .= "</dl>";
+	$output .= "</div><hr/>";
+	return $output;
+}
+
+function getSentMessages(){
+	$message = new Message(ApplicationController::getInstance());
+	$messages = $message->findMessages();
+	$output = '<div id="messages_' . $message->getId() . '">';
+	foreach($messages as $new){
+		$user = $new->getRelatedObjectForKey("sentBy");
+		$title = '<h4 class="message_title">' . "'{$new->title}'</h4>";
+		$output .= "<p> from {$user->username} @{$new->sent}</p><p>{$new->message}</p>";
+	}
+	$output .= "</div><hr />";
 	return $output;
 }
 $title = "Messages";
@@ -27,13 +52,12 @@ $message = "[dynamic instructional messages]";
 	<li><a href="../pages/ViewStarredMessagesPage">Starred Messages</a></li>
 	<li><a href="../pages/ViewSentMessagesPage">Sent Messages</a></li>
 </ul>
-<div class="panes">
-	<div><?php echo getNewMessages(); ?></div>
+<div class="panes" id="messages"">
+	<div><?php echo getAllMessages($factory,$user);?></div>
 	<div>2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac odio at felis malesuada pulvinar pellentesque eget justo. Donec blandit gravida semper.</div>
 	<div>3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac odio at felis malesuada pulvinar pellentesque eget justo. Donec blandit gravida semper.</div>
 	<div>
-		<p>4. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac odio at felis malesuada pulvinar pellentesque eget justo. Donec blandit gravida semper.</p>
-		<p><img src="../resources/images/page_word.png" /><img src="../resources/images/page_word.png" /><img src="../resources/images/page_word.png" /><img src="../resources/images/page_word.png" /></p>
+		<?php echo getSentMessages(); ?>
 	</div>
 </div>
 <div id="messages_pagination">

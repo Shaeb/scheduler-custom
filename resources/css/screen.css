@@ -77,6 +77,20 @@ div.calendar_date {
 	padding-right: 0.5em;
 }
 
+.calendar_today {
+	background-color: #EFEFEF;
+}
+
+.calendar_date_in_month {
+	cursor: pointer;
+}
+
+.calendar_date_selected {
+	background-color: #F2FFE1;
+}
+
+/** end calendar **/
+
 #navigation, #mainContent {
 	position: relative;
 	top: 60px;
@@ -98,6 +112,39 @@ div.calendar_date {
 #navigation ul li {
 	display: inline;
 	width: auto;
+}
+
+/** for creating calendar icons ***/
+#day_off_request_preview_message_container {
+	height: 150px;
+}
+	
+.calendar_icon_block {
+	display:block;
+	text-align: center;
+	float:left;
+	font-family: Arial, Helvetica, sans-serif;
+	background: url(images/blue4.png) no-repeat;
+	width:79px;
+	height: 79px;
+	padding-left: .25em;
+}
+
+.calendar_icon_month {
+	display:block;
+	font-size: .9em;
+	margin:0;
+	padding:0;
+	font-weight: bold;
+	text-align:center;
+}
+
+.calendar_icon_day {
+	display:block;
+	font-size:1.4em;
+	margin:0;
+	padding:0.7em 0 1.3em 0;
+	text-align: center;
 }
 
 /**** from tabs ***/

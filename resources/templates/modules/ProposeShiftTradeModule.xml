@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
 <module name="ProposeShiftTradeModule">
 	<data type="DynamicFile">ProposeShiftTrade.Module.php</data>
+	<process>ProposeShiftTrade.Processor.php</process>
+	<view>ProposeShiftTrade.Module.php</view>
 </module>

@@ -2,9 +2,32 @@
 define( XML_FORMAT, "XML");
 define( HTML_FORMAT, "HTML");
 define( JSON_FORMAT, "JSON");
+define( RAW_FORMAT, "RAW");
 
-abstract class Document extends DOMDocument {
-
+class Document extends DOMDocument {
+	protected $xmlMap;
+	protected $url;
+	protected $isLoaded;
+	
+	
+	protected function loadDocument($url) {
+		if( isset( $url )  ) {
+			$this->url = $url;
+			if( $this->urlExists( $this->url ) ) {
+				$this->preserveWithWhiteSpace = false;
+				$this->isLoaded = $this->load( $this->url, LIBXML_NOBLANKS );
+				if($this->isLoaded){
+					$this->xmlMap = array();
+					$this->xmlMap = $this->reload($this->documentElement->childNodes, $this->xmlMap);
+				} else {
+					throw new Exception("could not load document {$this->url} in Document");
+				}
+			} else {
+				throw new Exception( "url not found: {$this->url}." );
+			}
+		}
+	}
+	
 	protected function urlExists($url) {
 		$hdrs = @get_headers($url);
 		return is_array($hdrs) ? preg_match("/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/",$hdrs[0]) : false;
@@ -84,6 +107,61 @@ abstract class Document extends DOMDocument {
 		return (XML_FORMAT == $format) ? $this->saveXML() : (HTML_FORMAT == $format) ? $this->saveHTML() : 
 			(JSON_FORMAT == $formation ) ? $this->saveJSON() : $this->saveHTML();
 	}
+	
+	public function getProcessorOutput($format = XML_FORMAT, $paramaters){
+		
+	}
+	
+	public function getXMLAsMap(){
+		return $this->xmlMap;
+	}
+	
+	protected function reload(DOMNodeList $nodes, $settings){	
+		foreach($nodes as $node){
+			if(!$node->hasChildNodes() || "#text" == $node->firstChild->nodeName || "#comment" == $node->firstChild->nodeName){
+				$settings[$node->nodeName] = $node->nodeValue;
+			} else {
+				$settings[$node->nodeName] = $this->reload($node->childNodes, $settings[$node->nodeName]); 
+			}
+		}
+		return $settings;
+	}
 }
+/**
+class XMLMap extends Document {
+	private $url;
+	private $settings;
+	public  $isLoaded;
+	//private static $instance; 
 
+	public function __construct($url) {
+		if( isset( $url )  ) {
+			$this->url = $url;
+			if( $this->urlExists( $this->url ) ) {
+				$this->preserveWithWhiteSpace = false;
+				$this->isLoaded = $this->load( $this->url, LIBXML_NOBLANKS );
+				$this->settings = array();
+				$this->settings = $this->reload($this->documentElement->childNodes, $this->settings);
+			} else {
+				throw new Exception( "url not found: {$this->url}." );
+			}
+		}
+	}
+		
+	private function reload(DOMNodeList $nodes, $settings){	
+		foreach($nodes as $node){
+			if(!$node->hasChildNodes() || "#text" == $node->firstChild->nodeName || "#comment" == $node->firstChild->nodeName){
+				$settings[$node->nodeName] = $node->nodeValue;
+			} else {
+				$settings[$node->nodeName] = $this->reload($node->childNodes, $settings[$node->nodeName]); 
+			}
+		}
+		return $settings;
+	}
+	
+	public function getData(){
+		return $this->settings;
+	}
+}
+**/
 ?>

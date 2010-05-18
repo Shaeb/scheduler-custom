@@ -28,6 +28,22 @@ class ApplicationController {
 		if( isset($_SESSION['username'])){
 			$username = $_SESSION['username'];
 		}
+		$settings = $this->appSettings->getSettings();
+		$settings = $settings[ENVIRONMENT]["database"];
+		if(isset($settings)){
+			if(array_key_exists("username",$settings)){
+				$this->connection->setUsername($settings["username"]);
+			}
+			if(array_key_exists("password",$settings)){
+				$this->connection->setPassword( $settings["password"]);
+			}
+			if(array_key_exists("hostname",$settings)){
+				$this->connection->setHost( $settings["hostname"]);
+			}
+			if(array_key_exists("databasename",$settings)){
+				$this->connection->setDatabase( $settings["databasename"]);
+			}
+		}
 		$this->user = new User($username,'');
 		if($this->session->isSessionAuthenticated()){
 			$this->user->restoreUserFromUsername( $this->connection );
@@ -47,22 +63,6 @@ class ApplicationController {
 	
 	public function getDatabaseConnection(){
 		//$settings = $this->appSettings->getSettingsFor("database");
-		$settings = $this->appSettings->getSettings();
-		$settings = $settings[ENVIRONMENT]["database"];
-		if(isset($settings)){
-			if(array_key_exists("username",$settings)){
-				$this->connection->setUsername($settings["username"]);
-			}
-			if(array_key_exists("password",$settings)){
-				$this->connection->setPassword( $settings["password"]);
-			}
-			if(array_key_exists("hostname",$settings)){
-				$this->connection->setHost( $settings["hostname"]);
-			}
-			if(array_key_exists("databasename",$settings)){
-				$this->connection->setDatabase( $settings["databasename"]);
-			}
-		}
 		return $this->connection;
 	}
 	
@@ -110,14 +110,14 @@ class ApplicationController {
 	public function setMessage( $message, $type = INFORMATIONAL_MESSAGES ) {
 		if(isset($message)){
 			$this->messages[$type] = $message;
-			//$_SESSION[ 'flash' ] = $message;
+			$_SESSION[ 'flash' ] = $message;
 		}
 	}
 	
 	public function addMessage( $message, $type = INFORMATIONAL_MESSAGES ) {
 		if(isset($message)){
 			$this->messages[$type][] = $message;
-			//$_SESSION[ 'flash' ] .= $message;
+			$_SESSION[ 'flash' ] .= $message;
 		}
 	}
 	
@@ -195,12 +195,12 @@ class SessionController {
 
 class ApplicationSettingsMap extends Document {
 	private $environment;
-	private $url;
+	//private $url;
 	private $appSettingsFileName;
 	private $tags;
 	private $settings;
 	private $environmentRootNode;
-	public  $isLoaded;
+	//public  $isLoaded;
 	//private static $instance; 
 
 	public function __construct($appSettingsFileName, $environment) {
@@ -212,7 +212,6 @@ class ApplicationSettingsMap extends Document {
 				$this->isLoaded = $this->load( $this->url, LIBXML_NOBLANKS );
 				$this->settings = array();
 				$this->settings = $this->reload($this->documentElement->childNodes, $this->settings);
-//				print_r($this->settings);
 			} else {
 				$this->log( "url not found: $this->url." );
 				$this->reload(APPLICATION_DEFAULT_SETTINGS_FILE, $environment);

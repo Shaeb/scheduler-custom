@@ -1,13 +1,14 @@
 Options +FollowSymlinks
 RewriteEngine on
 
-RewriteRule ^scaffold/([^/]+)/([^/]+) /scheduler/index.php?scaffolding=true&page=$1&id=$2 [NC]
-RewriteRule ^scaffold/([^/]+) /scheduler/index.php?scaffolding=true&page=$1 [NC]
-RewriteRule ^page/([^/]+) /scheduler/index.php?page=$1 [NC]
-RewriteRule ^ajax/([^/]+\/?) /scheduler/ajax.php?module=$1 [NC]
-RewriteRule ^json/([^/]+\/?)/([^/]+\/?)/([^/]+\/?) /scheduler/json.php?output=json&module=$1&query=$2&action=$3 [NC]
-RewriteRule ^json/([^/]+\/?)/([^/]+\/?) /scheduler/json.php?output=json&module=$1&query=$2 [NC]
-RewriteRule ^json/([^/]+\/?) /scheduler/json.php?output=json&module=$1
-RewriteRule ^scaffold/([^/]+)/([^/]+)/([\d]+) /scheduler/scaffold.php?action=$1&table=$2&id=$3 [NC]
-RewriteRule ^scaffold/([^/]+)/([^/]+) /scheduler/scaffold.php?action=$1&table=$2 [NC]
-RewriteRule ^scaffold/([^/]+) /scheduler/scaffold.php?action=$1 [NC]
+RewriteRule ^scaffold/([^/]+)/([^/]+) /index.php?scaffolding=true&page=$1&id=$2 [NC]
+RewriteRule ^scaffold/([^/]+) /index.php?scaffolding=true&page=$1 [NC]
+RewriteRule ^page/([^/]+) /index.php?page=$1 [NC]
+RewriteRule ^ajax/([^/]+\/?)/([^/]+\/?) /ajax.php?module=$1&action=$2 [NC]
+RewriteRule ^ajax/([^/]+\/?) /ajax.php?module=$1 [NC]
+RewriteRule ^json/([^/]+\/?)/([^/]+\/?)/([^/]+\/?) /json.php?output=json&module=$1&query=$2&action=$3 [NC]
+RewriteRule ^json/([^/]+\/?)/([^/]+\/?) /json.php?output=json&module=$1&query=$2 [NC]
+RewriteRule ^json/([^/]+\/?) /json.php?output=json&module=$1
+RewriteRule ^scaffold/([^/]+)/([^/]+)/([\d]+) /scaffold.php?action=$1&table=$2&id=$3 [NC]
+RewriteRule ^scaffold/([^/]+)/([^/]+) /scaffold.php?action=$1&table=$2 [NC]
+RewriteRule ^scaffold/([^/]+) /scaffold.php?action=$1 [NC]

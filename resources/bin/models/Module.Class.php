@@ -5,11 +5,11 @@ class Module extends Document {
 	private $replacementTags;
 	private $moduleName;
 	private $definedName; // from XML file
-	private $url;
+	//private $url;
 	private $dynamicFileOutput;
 	private $staticFileOutput;
 	private $xmlOutput;
-	public  $isLoaded;
+	//public  $isLoaded;
 
 	function __construct( $moduleName ) {
 		if( $moduleName ) {
@@ -21,19 +21,24 @@ class Module extends Document {
 			$this->xmlOutput = new DOMDocument();
 			if( $this->urlExists( $this->url ) ) {
 				$this->loadModule();
+			} else {
+				throw new Exception("could not find module: {$this->url} in module");	
 			}
 		}
 	}
 
 	private function loadModule() {
 		$this->log( "<!-- loading module $this->url -->" );
-		$this->isLoaded = $this->load( $this->url );
-
+		//$this->isLoaded = $this->load( $this->url );
+		//$this->xmlMap = $this->reload($this->documentElement->childNodes, $this->xmlMap);
+		$this->loadDocument($this->url);
 		if( !$this->isLoaded ) {
+			//throw new Exception("not loaded in module: {$this->isLoaded}");
 			return;
 		}
 
 		if( !$this->hasChildNodes() ) {
+			throw new Exception("no child nodes in module");
 			return;
 		}
 
@@ -51,6 +56,10 @@ class Module extends Document {
 	}
 
 	private function processTags( DOMNodeList $nodes ) {
+		// ugly hack, will fix laters
+		if("process" == $_REQUEST["action"]){
+			return;
+		}
 		foreach( $nodes as $node ) {
 			switch( $node->tagName ) {
 				case DEPENDENCY_TAG:
@@ -81,7 +90,6 @@ class Module extends Document {
 				**********/
 					break;
 				case DATA_TYPE_PROCESSOR_VALUE:
-
 					break;
 				case DATA_TYPE_DYNAMICFILE_VALUE:
 					if ( file_exists( MODULE_FILE_PATH . $node->nodeValue ) ) {
@@ -109,17 +117,35 @@ class Module extends Document {
 	}
 
 	public function getOutput($format = XML_FORMAT) {
+		if(RAW_FORMAT == $format){
+			$output .= $this->dynamicFileOutput . "";
+			$output .= $this->staticFileOutput . "";
+			return $output;
+		}
 		if(JSON_FORMAT == $format){
 			return $this->saveJSON();
 		} else {
-			$output = "<div id='{$this->definedName}' name='{$this->definedName}'>\n";
-			$output .= $this->dynamicFileOutput . "\n";
-			$output .= $this->staticFileOutput . "\n";
-			$output .= "</div>\n";
-			$this->xmlOutput->loadHTML( $output );
+			$output = '<div id="' . $this->definedName . '" name="' . $this->definedName . '">';
+			$output .= $this->dynamicFileOutput . "";
+			$output .= $this->staticFileOutput . "";
+			$output .= "</div>";
+			@$this->xmlOutput->loadHTML( $output );
 			//$this->log( "<!-- " . $this->stripHTMLOutput( $this->xmlOutput->saveHTML() ) . " --> ");
 			return $this->stripHTMLOutput( 
 				(XML_FORMAT == $format ) ? $this->xmlOutput->saveXML() : $this->xmlOutput->saveHTML() );
+		}
+	}
+	
+	public function getProcessorOutput($format = XML_FORMAT, $parameters){
+		if ( file_exists( MODULE_FILE_PATH . $this->xmlMap["process"] ) ) {
+			ob_start();
+			$file = MODULE_FILE_PATH . $this->xmlMap["process"];
+			include $file;
+			$this->dynamicFileOutput .= ob_get_contents();
+			ob_end_clean();
+			return $this->dynamicFileOutput;
+		} else {
+			throw new Exception("file not found " . MODULE_FILE_PATH . $this->xmlMap["process"] . " in Module::getProcessorOutput");
 		}
 	}
 }

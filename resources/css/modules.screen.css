@@ -2,10 +2,15 @@
 #DisplayInformationModule {
 	border-top: 1px dashed #EFEFEF;
 }
-#ProposeShiftTradeModule {
+#ProposeShiftTradeModule, #RequestTimeOffModule, #ViewProposedTradesModule{
 		display:none;
 }
 
 #SendAMessageModule{
 	display: none;
+}
+
+#request_time_off_message, #shift_trade_message {
+	border: 1px solid #AFAFAF;
+	padding: 0.5em;
 }

@@ -53,6 +53,7 @@
 	settings,
 	open,
 	active,
+	suppress,
 	
 	// ColorBox Default Settings.	
 	// See http://colorpowered.com/colorbox for details.
@@ -83,6 +84,7 @@
 		next: "next",
 		close: "close",
 		open: FALSE,
+		suppress: FALSE,
 		overlayClose: TRUE,
 		
 		slideshow: FALSE,
@@ -151,6 +153,8 @@
 			$related = $(element);
 			index = 0;
 		}
+		
+		if(suppress) { return; }
 		
 		if (!open) {
 			open = TRUE;
@@ -743,8 +747,10 @@
 	// A method for fetching the current element ColorBox is referencing.
 	// returns a jQuery object.
 	cboxPublic.element = function(){ return $(element); };
-
+	
 	cboxPublic.settings = defaults;
+	
+	cboxPublic.suppress = function(value){ suppress = value; };
 
 	// Initializes ColorBox when the DOM has loaded
 	$(cboxPublic.init);

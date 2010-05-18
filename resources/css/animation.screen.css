@@ -30,3 +30,13 @@
 	padding:0.7em 0 1.3em 0;
 	text-align: center;
 }
+
+/*** animation related ***/
+.greyBorders {
+	border: 1px solid #AFAFAF;
+	padding: 0.5em;
+}
+
+.inform {
+	background-color: #FFFF88;
+}

@@ -6,13 +6,13 @@ add_required_class( 'Module.Class.php', MODEL );
 class Page extends Document {
 	private $template;
 	private $pageName;
-	private $url;
+	//private $url;
 	private $tags;
 	private $moduleList;
 	private $title;
 	private $application;
 	private $scaffolding;
-	public  $isLoaded;
+	//public  $isLoaded;
 
 	function __construct( $pageName ) {
 		$this->application = ApplicationController::getInstance();

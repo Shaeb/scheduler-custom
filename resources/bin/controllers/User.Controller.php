@@ -74,6 +74,7 @@ class UserController {
 		} else {
 			echo "not logged in";
 			print_r( $this->user);
+			//throw new Exception($connection->getError());
 		}
 	}
 }

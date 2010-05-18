@@ -1,6 +1,7 @@
 <?
 add_required_class( 'Application.Controller.php', CONTROLLER );
 class User {
+	public $id;
 	var $username = '';
 	var $password = '';
 	var $userLevel = 2;
@@ -17,11 +18,13 @@ class User {
 		$this->isAuthenticated = false;
 
 		if( $connection == null ) {
+			throw new Exception("Connection is null in User.Class");
 			return $this->isAuthenticated;
 		}
 
 		if( !$connection->isConnected ) {
 			if( !$connection->Connect() ){
+				throw new Exception("Could not connect in User.Class");
 				return $this->isAuthenticated;
 			}
 		}
@@ -29,10 +32,12 @@ class User {
 		$query = "select userId, username, userLevel from users where username='{$this->username}' and password='{$this->password}';";
 
 		if( !$connection->query( $query ) ) {
+			throw new Exception("Could not query {$query} in User.Class");
 			return $this->isAuthenticated;
 		} 
 
 		if( 1 > $connection->getNumRows() ) {
+			throw new Exception("Number of Rows = " . $connection->getNumRows() . " in User.Class");
 			//echo "user {$query}";
 			//print_r($connection->getObject());
 			return $this->isAuthenticated;
@@ -78,12 +83,14 @@ class User {
 	}
 	
 	public function restoreUserFromUsername( DatabaseConnection $connection ) {
+		$this->isAuthenticated = false;
 		if(!isset($connection) || !isset($this->username)) {
-			$this->isAuthenticated = false;
-			return$this->isAuthenticated;
+			return $this->isAuthenticated;
 		}
+		
 		if( !$connection->isConnected ) {
 			if( !$connection->Connect() ){
+				throw new Exception("here : " . $connection->getError());
 				return $this->isAuthenticated;
 			}
 		}
@@ -93,14 +100,14 @@ class User {
 		if( !$connection->query( $query ) ) {
 			return $this->isAuthenticated;
 		} 
-
+		
 		if( 1 > $connection->getNumRows() ) {
 			//echo "user {$query}";
-			//print_r($connection->getObject());
 			return $this->isAuthenticated;
 		}
 
 		$user = $connection->getObject();
+		$this->id = $user->userId;
 		$this->userLevel = $user->userLevel;
 		$this->lastLogin = $user->lastLogin;
 		$this->ipaddress = $user->ipaddress;

@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
 <module name="ViewProposedTradesModule">
 	<data type="DynamicFile">ViewProposedTrades.Module.php</data>
+	<view>ViewProposedTrades.Module.php</view>
+	<process>ViewProposedTrades.Processor.php</process>
 </module>

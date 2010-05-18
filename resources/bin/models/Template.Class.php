@@ -4,8 +4,8 @@
 class Template extends Document {
 	private $replacementTags;
 	private $templateName;
-	private $url;
-	public  $isLoaded;
+	//private $url;
+	//public  $isLoaded;
 
 	function __construct( $templateName ) {
 		if( $templateName ) {

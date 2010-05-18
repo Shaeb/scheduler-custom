@@ -106,6 +106,7 @@ class ScaffoldObject{
 	private $values;
 	private $connection;
 	public $primaryKey;
+	public $query;
 	
 	public function __construct($dataMap, DatabaseConnection $connection){
 		if(isset($dataMap) && isset($connection)){
@@ -146,6 +147,14 @@ class ScaffoldObject{
 			}
 		}
 		return $value;
+	}
+	
+	public function getRelatedObjectForKey($key){
+		foreach($this->data["references"]["foreign_keys"] as $foreignKey){
+			if($key == $foreignKey["foreign_key"]){
+				return $foreignKey["object"];
+			}
+		}
 	}
 	
 	public function __set($name,$value){
@@ -228,16 +237,22 @@ class ScaffoldObject{
 				$fields = preg_replace($regexStrip, "", $fields);
 
 				if(array_key_exists("conditions",$options)){
-					$query .=  "[WHERE] ";
+					$query .=  " where [WHERE] ";
 					$regexOperators = "/^[\>\<\=\!]{1,2}/";
 					$conditions = $options["conditions"];
 					$keys = array_keys($conditions);
 					foreach($keys as $key){
+						if("throw" == $key){
+							$throw = true;
+						}
+						
 						$matches = array();
 						if(0 != preg_match_all($regexOperators, $conditions[$key],$matches)){
-							$whereClause .= " and {$key} {$conditions[$key]}";
+							$whereClause .= ("" == $whereClause ) ? "" : " and ";
+							$whereClause .= "{$key} {$conditions[$key]}";
 						} else {
-							$whereClause .= " and {$key} = {$conditions[$key]}";
+							$whereClause .= ("" == $whereClause ) ? "" : " and ";
+							$whereClause .= "{$key} = '{$conditions[$key]}'";
 						}
 					}
 					
@@ -247,7 +262,7 @@ class ScaffoldObject{
 				
 				if(array_key_exists("order_by",$options) && array_key_exists($options["order_by"],$this->values)){					
 				 	$query .= " [ORDER]";
-					$orderClause = " order by " . $options["order_by"] . " 	";
+					$orderClause = "order by " . $options["order_by"] . " ";
 					$orderClause .= (array_key_exists("order_type",$options)) ? $options["order_type"] : "desc";
 				}
 				
@@ -259,8 +274,19 @@ class ScaffoldObject{
 		
 		$query .= ";";
 		
-		$this->connection->connect();
-		$this->connection->query($query);
+		$this->query = $query;
+		
+		if($throw){
+			throw new Exception($query);
+		}
+		if(!$this->connection->connect()){
+			throw new Exception("could not connect in scaffold");
+			return null;
+		}
+		if(!$this->connection->query($query)){
+			throw new Exception("could not query in scaffold {$query}");
+			return null;
+		}
 		$results = $this->connection->getResults();
 		$objects = array();
 		while($result = mysql_fetch_array($results, MYSQL_ASSOC)){
@@ -295,7 +321,6 @@ class ScaffoldObject{
 		$fields = preg_replace($regexStrip, "", $fields);
 		$query = str_replace("[FIELDS]", $fields, $query);
 		
-		echo $query;
 		$this->connection->connect();
 		$success = $this->connection->queryExecute($query);
 		
@@ -304,10 +329,10 @@ class ScaffoldObject{
 	
 	public function add(){
 		if(!isset($this->data["table_name"])){
-			return false;
+			throw new Exception("Table name not defined in Scaffold");
 		}
 		if(!isset($this->connection)){
-			return false;
+			throw new Exception("Connection null in Scaffold");
 		}
 		$tableName = $this->data["table_name"];
 		$query = "insert into {$tableName}([FIELDS]) values([VALUES]);";
@@ -327,8 +352,11 @@ class ScaffoldObject{
 		$query = str_replace("[FIELDS]", $fields, $query);
 		$query = str_replace("[VALUES]", $values, $query);	
 		$query .- ";";
-		$this->connection->connect();
-		$success = $this->connection->queryExecute($query);
+		if($this->connection->connect()){
+			$success = $this->connection->queryExecute($query);
+		} else {
+			throw new Exception("could not connect in Scaffold");
+		}
 		
 		return $success;
 	}
@@ -356,6 +384,10 @@ class ScaffoldObject{
 	public function validate(){
 		$isValid = false;
 		return $isValid;
+	}
+	
+	public function me(){
+		return (object)$this->values;
 	}
 }
 
@@ -386,14 +418,14 @@ class ScaffoldFactory{
 			return null;
 		}
 		if(array_key_exists($tableName,$this->objects)){
-			return $this->objects[$tableName];
+			//return $this->objects[$tableName];
 		}
 		
 		$this->scaffold->getTableData();
 		$this->scaffold->getTableDefinitionData($tableName);
 		$tables = $this->scaffold->getTables();
 		$object = new ScaffoldObject($tables[$tableName], $this->connection);
-		$this->objects[$tableName] = $object;
+		//$this->objects[$tableName] = $object;
 		return $object;
 	}
 }

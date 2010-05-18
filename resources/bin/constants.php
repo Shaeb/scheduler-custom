@@ -1,5 +1,5 @@
 <?
-define(APP_PREFIX, "/scheduler/");
+define(APP_PREFIX, "/");
 define(	"APP_ADDRESS", 'http://' . $_SERVER['HTTP_HOST'] . APP_PREFIX);
 define( "RESOURCES_PATH", APP_ADDRESS . 'resources/' );
 define( "CONTROLLER_PATH", RESOURCES_PATH . 'bin/controllers/' );
