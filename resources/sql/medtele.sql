@@ -3,12 +3,6 @@ create table EmployeeTitles (
 	description varchar(50)
 ) engine=INNODB;
 
-insert into EmployeeTitles(description) values("Registered Nurse");
-insert into EmployeeTitles(description) values("Nurse Tech");
-insert into EmployeeTitles(description) values("Assistant Manager");
-insert into EmployeeTitles(description) values("Department Manager");
-insert into EmployeeTitles(description) values("Department Supervisor");
-
 create table UserLevels (
 	userLevelId int not null auto_increment primary key,
 	description varchar(25)
@@ -35,10 +29,6 @@ create table Employees (
 	constraint Employees_employeeTitleId_foreignkey foreign key( employeeTitleId ) references EmployeeTitles(employeeTitleId) on delete cascade on update cascade
 ) engine=INNODB;
 
-insert into Employees(userId, employeeTitleId) values( 2, 1);
-insert into Employees(userId, employeeTitleId) values( 2, 4);
-insert into Employees(userId, employeeTitleId) values( 4, 1);
-
 create table AssignedEmployeeTitles (
 	id int not null auto_increment primary key,
 	employeeId int not null,
@@ -58,8 +48,6 @@ create table Departments (
 	constraint Departments_manager_foreignkey foreign key( manager ) references Employees(employeeId) on delete cascade on update cascade
 ) engine=INNODB;
 
-insert into departments(name, manager) values("MSU",2);
-
 create table EmployeeDepartmentAssignments (
 	id int not null auto_increment primary key,
 	employeeId int not null,
@@ -71,10 +59,6 @@ create table EmployeeDepartmentAssignments (
 	constraint EmployeeDepartmentAssignments_assignedBy_foreignkey foreign key( assignedBy ) references Employees(employeeId) on delete cascade on update cascade
 ) engine=INNODB;
 
-insert into EmployeeDepartmentAssignments(employeeId, departmentId, assignedBy) values(1,1,2);
-insert into EmployeeDepartmentAssignments(employeeId, departmentId, assignedBy) values(2,1,2);
-insert into EmployeeDepartmentAssignments(employeeId, departmentId, assignedBy) values(3,1,2);
-
 #all times are recorded as military hours: 8am = 800, 11pm = 23
 # for this table, the logic for overnight shifts is as such
 # if endingTime < beginningTime the shift is overnight: beginningTime = 1845 endingTime = 645
@@ -84,13 +68,6 @@ create table ShiftTypes(
 	beginningTime int not null,
 	endingTime int not null
 ) engine=INNODB;
-
-insert into ShiftTypes(description, beginningTime, endingTime) values('First Shift', 0645, 1930);
-insert into ShiftTypes(description, beginningTime, endingTime) values('Second Shift', 1845, 0730);
-insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off - Vacation', 0, 0);
-insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off - Sick Day', 0, 0);
-insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off - Injury', 0, 0);
-insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off', 0, 0);
 
 # active means this is the current (or pending) shift.  this will help us get an historical perspective if shifts are being frequently changed
 create table Shifts(
@@ -109,9 +86,6 @@ create table Shifts(
 	constraint Shifts_scheduledBy_foreignkey foreign key( scheduledBy ) references Employees(employeeId) on delete cascade on update cascade,
 	constraint Shifts_approvedBy_foreignkey foreign key( approvedBy ) references Employees(employeeId) on delete cascade on update cascade
 ) engine=INNODB;
-
-insert into Shifts(employeeId, shiftTypeId, scheduledDate, scheduledBy, approvedBy) value(3,2,"2010-05-29",3,2);
-insert into Shifts(employeeId, shiftTypeId, scheduledDate, scheduledBy, approvedBy) value(3,2,"2010-05-28",3,2);
 
 create table ShiftTrades(
 	shiftTradeId int not null auto_increment primary key,
@@ -171,6 +145,32 @@ create table ScaffoldingFields(
 	tableId int not null,
 	constraint ScaffoldingFields_tableId_foreignkey foreign key( tableId ) references ScaffoldingTables(id) on delete cascade on update cascade	
 ) engine=INNODB;
+
+insert into EmployeeTitles(description) values("Registered Nurse");
+insert into EmployeeTitles(description) values("Nurse Tech");
+insert into EmployeeTitles(description) values("Assistant Manager");
+insert into EmployeeTitles(description) values("Department Manager");
+insert into EmployeeTitles(description) values("Department Supervisor");
+
+insert into Employees(userId, employeeTitleId) values( 2, 1);
+insert into Employees(userId, employeeTitleId) values( 2, 4);
+insert into Employees(userId, employeeTitleId) values( 4, 1);
+
+insert into departments(name, manager) values("MSU",2);
+
+insert into EmployeeDepartmentAssignments(employeeId, departmentId, assignedBy) values(1,1,2);
+insert into EmployeeDepartmentAssignments(employeeId, departmentId, assignedBy) values(2,1,2);
+insert into EmployeeDepartmentAssignments(employeeId, departmentId, assignedBy) values(3,1,2);
+
+insert into ShiftTypes(description, beginningTime, endingTime) values('First Shift', 0645, 1930);
+insert into ShiftTypes(description, beginningTime, endingTime) values('Second Shift', 1845, 0730);
+insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off - Vacation', 0, 0);
+insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off - Sick Day', 0, 0);
+insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off - Injury', 0, 0);
+insert into ShiftTypes(description, beginningTime, endingTime) values('Day Off', 0, 0);
+
+insert into Shifts(employeeId, shiftTypeId, scheduledDate, scheduledBy, approvedBy) value(3,2,"2010-05-29",3,2);
+insert into Shifts(employeeId, shiftTypeId, scheduledDate, scheduledBy, approvedBy) value(3,2,"2010-05-28",3,2);
 
 insert into ScaffoldingTables(tableName) values('ShiftTypes');
 insert into ScaffoldingTables(tableName) values('EmployeeTitles');
