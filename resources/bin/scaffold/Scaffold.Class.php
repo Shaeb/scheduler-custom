@@ -275,7 +275,6 @@ class ScaffoldObject{
 		$query .= ";";
 		
 		$this->query = $query;
-		
 		if($throw){
 			throw new Exception($query);
 		}
@@ -355,7 +354,7 @@ class ScaffoldObject{
 		if($this->connection->connect()){
 			$success = $this->connection->queryExecute($query);
 		} else {
-			throw new Exception("could not connect in Scaffold");
+			throw new Exception("could not connect in Scaffold.  Error: " . $this->connection->getError());
 		}
 		
 		return $success;

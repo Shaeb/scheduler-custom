@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<module name="ValidateScheduleDatesModule">
+	<data type="DynamicFile">ValidateScheduleDates.Module.php</data>
+	<process>ValidateScheduleDates.Processor.php</process>
+	<view>ValidateScheduleDates.Module.php</view>
+</module>

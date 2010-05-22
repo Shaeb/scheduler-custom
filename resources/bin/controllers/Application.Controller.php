@@ -397,7 +397,8 @@ class DatabaseConnection{
 	// test for errors
 	// if error, display error information with admin email
 	function query($query){
-		if( !( $this->results = mysql_query( $query) ) )
+		//$query = addslashes($query);
+		if( !( $this->results = mysql_query( $query ) ) )
 		{
 			// failure
 			$this->error = mysql_error();
@@ -408,7 +409,7 @@ class DatabaseConnection{
 	}
 	
 	function queryExecute($query){
-		if( !( mysql_query( $query) ) )
+		if( !( mysql_query( $query ) ) )
 		{
 			// failure
 			$this->error = mysql_error();

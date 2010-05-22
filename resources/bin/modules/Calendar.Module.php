@@ -42,10 +42,33 @@ $instructionShiftTradeProposalSuccess = <<<END
 </div>
 END;
 
+$instructionMessageForScheduling = <<<END
+<div class="schedule_message hide greyBorders" id="schedule_instructional_message">
+	To schedule your shift, follow these simple steps:
+	<ol>
+		<li>Select the <u>day</u> you would like to schedule.  You can do this by clicking on the day you would like to schedule.</li>
+		<li>Once you have clicked the days you would like to schedule, click on the link below the calendar "Submit and Save."</li>
+		<li>You will see a form pop up.  A list of the days you would like to add to your schedule will show up.  We will also make sure that the days you 
+		had picked can be put on to your schedule.  If they cannot, then we will show you which days could not be scheduled and remove them from your list.  
+		Once you are happy with your schedule, please click the button that says "I would like to save my schedule"  and we will attempt to add those days to 
+		you personal schedule.  This will automatically send a message to the appropriate people to approve your schedule.  A message will also be sent to 
+		you so you know everything went through just fine!</li>
+	</ol>
+	Once your request has been approved or denied, a message will be sent to you.  Hope you enjoy your time off!
+</div>
+END;
+
+$scheduleSuccessMessage = <<<END
+<div class="schedule_message hide greyBorders" id="schedule_success_message">
+	We have successfully submitted the dates you chose to schedule.  We have already sent a message to managment to get your schedule approved.  Once we know 
+	the status of your new schedule then we will send you an update message.
+</div>
+END;
+
 echo "<h3>Calendar for: </h3>";
 echo '<img src="../resources/images/printer.png" id="calendar_icons icons_printer" />';
 echo '<p id="dynamic_instructional_text">' . $instructionMessageForTimeOffRequest . $instructionMessageForShiftTrade . $instructionShiftTradeSuccess . 
-	$instructionShiftTradeProposalSuccess . '</p>';
+	$instructionShiftTradeProposalSuccess . $instructionMessageForScheduling . $scheduleSuccessMessage . '</p>';
 
 // this needs to be dynamically generated
 echo <<<END

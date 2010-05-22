@@ -170,6 +170,7 @@ Medico.Calendar.Views.RequestTimeOff = {
 	},
 	
 	prepareAndDisplay: function(){
+		this.dateList.sort();
 		var length = this.dateList.dates.length;
 		var i = 0;
 		var date = null;
@@ -377,6 +378,234 @@ Medico.Calendar.Views.ViewShiftTrades = {
 	}
 };
 
+Medico.Calendar.Views.Schedule = {
+	elements: {
+		submit: null,
+		resetCalendar: null,
+		checkAvailability: null,
+		modal: null,
+		instructions: null,
+		dateIconContainer: null,
+		invalidDateContainer: null,
+		loadingImage: null,
+		input: null,
+		submitSchedule: null,
+		form: null,
+		inputShiftType: null,
+		successMessage: null
+	},
+	
+	ids: {
+		submit: "#calendar_submit_and_save",
+		resetCalendar: "#calendar_clear",
+		checkAvailability: "#calendar_check_availability",
+		modal: "#schedule_container",
+		instructions: "#schedule_instructional_message",
+		dateIconContainer: "#schedule_icon_container",
+		invalidDateContainer: "#schedule_results",
+		loadingImage: "#schedule_loading_image",
+		input: "#schedule_dates_input",
+		submitSchedule: "#schedule_submit",
+		form: "#schedule_form",
+		inputShiftType: "#schedule_shift_type",
+		successMessage: "#schedule_success_message"
+	},
+	
+	urls: {
+		validateDate: "../ajax/ValidateScheduleDatesModule"
+	},
+	
+	dateList: null,
+	datesHaveBeenValidated: false,
+	
+	ready: function(){
+		this.elements.submit = $(this.ids.submit);
+		this.elements.resetCalendar = $(this.ids.resetCalendar);
+		this.elements.checkAvailability = $(this.ids.checkAvailability);
+		this.elements.modal = $(this.ids.modal);
+		this.elements.instructions = $(this.ids.instructions);
+		this.elements.dateIconContainer = $(this.ids.dateIconContainer);
+		this.elements.invalidDateContainer = $(this.ids.invalidDateContainer);
+		this.elements.loadingImage = $(this.ids.loadingImage);
+		this.elements.input = $(this.ids.input);
+		this.elements.submitSchedule = $(this.ids.submitSchedule);
+		this.elements.form = $(this.ids.form);
+		this.elements.inputShiftType = $(this.ids.inputShiftType);
+		this.elements.successMessage = $(this.ids.successMessage);
+		
+		this.datesHaveBeenValidated = false;
+		
+		this.dateList = Medico.Calendar.Controllers.DateIconList;
+		
+		$(this.elements.submit).bind("click", $.proxy(this.click_submit, this));
+		$(this.elements.submitSchedule).bind("click", $.proxy(this.ajax_submit, this));
+		/*****
+		$(Medico.Calendar.Controllers.DateIconList).bind(Medico.Calendar.Controllers.DateIconList.events.date_updated,
+				$.proxy(this.event_updated, this));
+		*****/
+	},
+	
+	ajax_submit: function(event){
+		event.preventDefault();
+		$.ajax({
+			type: $(this.elements.form).attr("method"),
+			url: $(this.elements.form).attr("action"),
+			data: {
+				dates: this.elements.input.value,
+				shiftTypeId: $(this.elements.inputShiftType).attr("value"),
+				format: "RAW",
+				purpose: "submit"
+			},
+			dataType: "xml",
+			cache: false,
+			context: this,
+			success: this.success});
+	},
+	
+	click_submit: function(event){
+		event.preventDefault();
+		if(0 == this.dateList.dates.length) {
+			this.revealInstructions(this.elements.instructions);
+		} else {
+			this.prepareAndDisplay();
+		}
+	},
+	
+	click_reset: function(event){
+	},
+	
+	click_check: function(event){
+	},
+	
+	displayInvalidDates: function(data, text, xml){
+		data = $(data).find("dates").text();
+		var dates = data.split("|");
+		var icons = $(this.elements.dateIconContainer).children("div[class|=calendar_icon_block]");
+		var date = null;
+		var i = 0;
+		var length = icons.length;
+		var regex = /\d{4,}-\d{2,}-\d{2,}$/;
+		var output = "invalids:\n";
+		var id = null;
+		$(this.ids.invalidDateContainer + " > p").hide();
+		var invalidDates = false;
+		var input = this.elements.input.value;
+		input = input.split("|");
+		var output = new Array();
+		
+		for(i; i < length; (++i)) {
+			id = $(icons[i]).attr("id");
+			date = regex.exec(id).toString();
+			if(-1 < $.inArray(date, dates)) {
+				invalidDates = true;
+				$(icons[i]).addClass("hide");
+				$(this.elements.invalidDateContainer).append(icons[i]);
+				this.dateList.dates.splice(i,1);
+			} else {
+				output.push(date);
+			}
+		}
+		
+		output = output.join("|");
+		this.elements.input.value = output;
+		
+		if(invalidDates) {
+			var header = document.createElement("h4");
+			header.innerHTML = "Some dates you have picked were not valid";
+			
+			var p = document.createElement("p");
+			p.innerHTML = "If you choose to submit your schedule, we will simply ignore these dates.  You don't have to go back and modify anything.";
+			$(this.elements.invalidDateContainer).prepend(header);
+			$(this.elements.invalidDateContainer).append(p);
+			
+			delete header;
+			delete p;
+		} else {
+			var header = document.createElement("h4");
+			header.innerHTML = "Congratulations!";
+			
+			var p = document.createElement("p");
+			p.innerHTML = "The dates you have chosen are all valid.  We will go ahead and submit them all, you don't have to go back and modify anything.";
+			$(this.elements.invalidDateContainer).prepend(header);
+			$(this.elements.invalidDateContainer).append(p);
+			
+			delete header;
+			delete p;
+		}
+		this.datesHaveBeenValidated = true;
+		
+		delete dates;
+		delete icons;
+		delete date;
+		delete i;
+		delete length;
+		delete regex;
+		delete output;
+		delete id;
+		delete invalidDates;
+		delete input;
+		delete output;
+	},
+	
+	event_updated: function(event) {
+		this.datesHaveBeenValidated = false;
+	},
+	
+	prepareAndDisplay: function(){
+		this.dateList.sort();
+		var length = this.dateList.dates.length;
+		var i = 0;
+		var date = null;
+		var dateValue = "";
+		for(i; i < length; (++i)) {
+			date = this.dateList.dates[i];
+			dateValue += date.date;
+			if(i != (length - 1)) {
+				dateValue += "|";
+			}
+			$(this.elements.dateIconContainer).append(date.getIcon());
+		}
+		this.elements.input.value = dateValue;
+		$(this.elements.instructions).hide("slow");
+		$.fn.colorbox({ inline:true, href:this.elements.modal, width:"50%", height:"75%", open: true } );
+		$.ajax({
+			type: "POST",
+			url: this.urls.validateDate,
+			data: {
+				dates: this.elements.input.value,
+				format: "RAW",
+				purpose: "validate"
+			},
+			dataType: "xml",
+			cache: false,
+			context: this,
+			success: this.displayInvalidDates});
+		delete length;
+		delete i;
+		delete date;
+		delete dateValue;
+	},
+	
+	revealInstructions: function(element){
+		$("body").animate({scrollTop:0},0);
+		$(element).toggleClass("hide", false);
+		//$(document).mask("#EFEFEF"); // bug, does not work right, will investigate
+		$(element).expose();
+		$(element).effect("highlight", {}, 4000);
+	},
+	
+	success: function(data, text, xml){
+		var success = $(data).find("success").text() == "true" ? true : false;
+		$.fn.colorbox.close();
+		if(success) {
+			this.revealInstructions(this.elements.successMessage);
+		} else {
+		}
+		
+		delete success;
+	}
+};
+
 Medico.Calendar.Controllers.DateIconList = {
 	namespace: Medico.Calendar.Controllers.namespace + ".DateIconList",
 	event_date_added: "event_date_added",
@@ -399,7 +628,7 @@ Medico.Calendar.Controllers.DateIconList = {
 	},
 	
 	click_add: function(event){
-		if(event.wasAdded) {
+		if(event.wasAdded && "undefined" != typeof event.element.firstChild.innerHTML)  {
 			this.dates.push(new DateIcon(this.year, this.month, event.element.firstChild.innerHTML));
 			this.trigger_updated();
 		} else {
@@ -426,10 +655,20 @@ Medico.Calendar.Controllers.DateIconList = {
 		event.list = this.dates;
 		$(this).trigger(event);
 		delete event;
+	},
+	
+	sort: function(){
+		var sort = function(x,y){
+			var a = parseInt(x.date.replace(/-/g,""));
+			var b = parseInt(y.date.replace(/-/g,""));
+			return a - b;
+		};
+		this.dates.sort(sort);
 	}
 };
 
 (function($){
+	$(document).ready($.proxy(Medico.Calendar.Views.Schedule.ready, Medico.Calendar.Views.Schedule));
 	$(document).ready($.proxy(Medico.Calendar.Views.ViewShiftTrades.ready, Medico.Calendar.Views.ViewShiftTrades));
 	$(document).ready($.proxy(Medico.Calendar.Views.RequestTimeOff.ready, Medico.Calendar.Views.RequestTimeOff));
 	$(document).ready($.proxy(Medico.Calendar.Views.ShiftTrade.ready, Medico.Calendar.Views.ShiftTrade));

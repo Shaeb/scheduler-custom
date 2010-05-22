@@ -2,7 +2,7 @@
 #DisplayInformationModule {
 	border-top: 1px dashed #EFEFEF;
 }
-#ProposeShiftTradeModule, #RequestTimeOffModule, #ViewProposedTradesModule{
+#ProposeShiftTradeModule, #RequestTimeOffModule, #ViewProposedTradesModule, #ScheduleSubmitModule{
 		display:none;
 }
 

@@ -28,18 +28,33 @@ class Message {
 		if(0 == count($recipients)){
 			throw new Exception("No recipients added to the message");
 		}
-		$this->scaffold->sentBy = $this->user->id;
-		$this->scaffold->title = $title;
-		$this->scaffold->message = $message;
-		$this->scaffold->add();
-		$this->id = $this->database->getID();
-		$this->scaffold->find($this->id);
-		
-		$recipientScaffold = $this->factory->buildScaffoldObject("MessageRecipients");
-		$recipientScaffold->messageId = $this->id;
-		foreach($recipients as $recipient){
-			$recipientScaffold->recipient = $recipient;
-			$recipientScaffold->add();
+		try{
+			$this->scaffold->sentBy = $this->user->id;
+			$this->scaffold->title = addslashes($title);
+			$this->scaffold->message = addslashes($message);
+			$this->scaffold->add();
+			$conditions = array();
+			$conditions["conditions"] = array("sentBy" => $this->user->id);
+			$conditions["order_by"] = "sent";
+			$conditions["limit"] = 1;
+			
+			$message = $this->scaffold->find("all", $conditions);
+			$message = $message[0]->me();
+			//$this->id = $this->database->getID();
+			//$this->scaffold->find($this->id);
+			$id = $message->messageId;
+			
+			if(!isset($id)){
+				throw new Exception("ID not inserted {$id}: " .  $this->database->getID());
+			}
+			$recipientScaffold = $this->factory->buildScaffoldObject("MessageRecipients");
+			$recipientScaffold->messageId = $id;
+			foreach($recipients as $recipient){
+				$recipientScaffold->recipient = $recipient;
+				$recipientScaffold->add();
+			}
+		} catch( Exception $exception){
+			throw $exception;
 		}
 	}
 	

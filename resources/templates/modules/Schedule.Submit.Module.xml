@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<module name="ScheduleSubmitModule">
+	<data type="DynamicFile">Schedule.Submit.Module.php</data>
+</module>
