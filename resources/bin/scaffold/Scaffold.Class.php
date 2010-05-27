@@ -37,9 +37,13 @@ class Scaffold{
 		if(!isset($tableName)){
 			return false;
 		}
-		$this->connection->connect();
-		$query = "show columns from {$tableName}";
-		$this->connection->query($query);
+		try{
+			$this->connection->connect();
+			$query = "show columns from {$tableName}";
+			$this->connection->query($query);
+		} catch(Exception $e){
+			echo $e->getMessage();
+		}
 		$results = $this->connection->getResults();
 		$map = array();
 		
@@ -413,6 +417,8 @@ class ScaffoldFactory{
 	}
 
 	public function buildScaffoldObject($tableName){
+		
+		$tableName = strtolower($tableName);
 		if(!isset($tableName)){
 			return null;
 		}
