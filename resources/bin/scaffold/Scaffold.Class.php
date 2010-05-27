@@ -58,7 +58,7 @@ class Scaffold{
 		
 		$this->connection->connect();
 		$query = "show create table {$tableName}";
-		$regexPrimaryKey = "/PRIMARY KEY \(\`[\w]+\`\)/";
+		$regexPrimaryKey = "/PRIMARY KEY(\s)+\(\`[\w]+\`\)/";
 		$regexForeignKeys = "/FOREIGN KEY \(\`[\w]+\`\) REFERENCES \`[\w]+\` \(\`[\w]+\`\)/";
 		$regexFields = "/\`[\w]+\`/";
 		$regexRemoveBackticks = "/\`/";
